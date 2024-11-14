@@ -6,7 +6,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-image: url('./Assets/background\ -cis.png'); /* Ensure this image is in the correct path */
+    background-image: url('./Assets/bananabackground.png'); 
     background-size: cover;  /* Ensure the background image covers the entire screen */
     background-position: center;
     background-repeat: no-repeat;

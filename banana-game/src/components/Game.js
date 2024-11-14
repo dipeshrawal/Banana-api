@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import backimage from './Assets/bananabackground.png'
 
 function Game() {
   const [number, setNumber] = useState(''); // User's input number
@@ -10,6 +12,15 @@ function Game() {
   const [showResult, setShowResult] = useState(false); // Flag to display result after checking the answer
   const [loading, setLoading] = useState(false); // Flag for loading state when starting a game
   const [isIncorrect, setIsIncorrect] = useState(false); //Flag for the incorrect answer
+  const location = useLocation(); // Get location to detect if redirected with 'startNewGame'
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login"); // Redirect to login page if no token is found
+    }
+  }, [navigate]);
 
 
   // Start a new game
@@ -30,6 +41,12 @@ function Game() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (location.state?.startNewGame) {
+      startGame();
+    }
+  }, [location.state]);
 
   // Make a move and check if the solution is correct
   const enter = async () => {
@@ -79,81 +96,67 @@ function Game() {
   };
 
   return (
-    <div className='flex w-full h-full justify-center item-center'>
-      <div className="game-container p-4 w-full  max-w-xl h-full mt-6 bg-yellow-400 rounded-xl shadow-2xl">
-      <h1 className="text-3xl font-bold text-center mb-4 text-white">Banana Game</h1>
-
-      {/* Start Game or Play Again Button */}
-      {!gameData && !gameOver && !answerChecked && (
-        <div className="-game-btn">
-          <button
-            className="bg-[#b0cd04] hover:bg-green-600 text-white py-2 px-6 font-bold rounded-full shadow-md w-full"
-            onClick={startGame}
-            disabled={loading}
-          >
-            {loading ? 'Loading...' : 'New Game'}
-          </button>
-        </div>
-      )}
-
-      {/* Display Game Image, Result Message, and Input */}
-      {gameData && (
-        <div className="game-content text-center">
-          <div className="image-container mb-4">
-            <img src={gameData.question} alt="Game Question" className="mx-auto mb-4 border-4 border-white rounded-lg shadow-lg" />
-          </div>
-
-          {/* Display message and result */}
-          {showResult && gameOver ? (
-            isIncorrect ? (
-              <div className="result mt-4 text-center">
-                <h3 className="text-lg font-semibold">Game State</h3>
-                <p className="text-xl text-red-500">Oops! {isIncorrect} is not a correct number. Try again!</p>
-              </div>
-            ) :(
-              <div className="result mt-4 text-center">
-              <h3 className="text-lg font-semibold">Game State</h3>
-              <p className="text-xl text-green-500 font-bold">Correct answer! Well done!</p>
-            </div> 
-            )
-          ) : (
-            <div className="move flex justify-center space-x-4 mb-4">
-              <input
-                type="number"
-                placeholder="Enter a number"
-                value={number}
-                onChange={handleChange}
-                className="border-2 border-gray-300 p-2 rounded w-40 text-center"
-              />
-              <button
-                className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-2  w-40 h-11 shadow-md"
-                onClick={enter}
-              >
-                Enter
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Error Handling */}
-      {error && <p className="error text-red-500 text-center">{error}</p>}
-
-      {/* Play Again Button below the image */}
-      {gameOver && (
-        <div className="mt-4 text-center">
-          <button
-            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-full w-full shadow-lg"
-            onClick={handlePlayAgain}
-          >
-            Play Again
-          </button>
-        </div>
-      )}
-    </div>
-    </div>
+    <div className='flex justify-center item-center' style={{backgroundImage:`url(${backimage})`, backgroundSize: 'fit', backgroundPosition: 'centre'}}>
   
-    
+      <div className=" p-4 w-500 mt-6 bg-yellow-400 rounded-xl shadow-2xl" >
+        <h1 className="text-3xl font-bold text-center mb-4 text-white">Banana Game</h1>
+
+        {/* Display Game Image, Result Message, and Input */}
+        {gameData && (
+          <div className="game-content text-center">
+            <div className="image-container mb-4">
+              <img src={gameData.question} alt="Game Question" className="mx-auto mb-4 border-4 border-white rounded-lg shadow-lg" />
+            </div>
+
+            {/* Display message and result */}
+            {showResult && gameOver ? (
+              isIncorrect ? (
+                <div className="result mt-4 text-center">
+                  <h3 className="text-lg font-semibold">Game State</h3>
+                  <p className="text-xl text-red-500">Oops! {isIncorrect} is not a correct number. Try again!</p>
+                </div>
+              ) : (
+                <div className="result mt-4 text-center">
+                  <h3 className="text-lg font-semibold">Game State</h3>
+                  <p className="text-xl text-green-500 font-bold">Correct answer! Well done!</p>
+                </div>
+              )
+            ) : (
+              <div className="move flex justify-center space-x-4 mb-4">
+                <input
+                  type="number"
+                  placeholder="Enter a number"
+                  value={number}
+                  onChange={handleChange}
+                  className="border-2 border-gray-300 p-2 rounded w-40 text-center"
+                />
+                <button
+                  className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-2  w-40 h-11 shadow-md"
+                  onClick={enter}
+                >
+                  Enter
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Error Handling */}
+        {error && <p className="error text-red-500 text-center">{error}</p>}
+
+        {/* Play Again Button below the image */}
+        {gameOver && (
+          <div className="mt-4 text-center">
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-full w-full shadow-lg"
+              onClick={handlePlayAgain}
+            >
+              Play Again
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
