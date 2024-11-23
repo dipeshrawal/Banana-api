@@ -5,10 +5,10 @@ const gameController = require('../controllers/gameController');
 // Start a new game
 router.get('/start', gameController.startGame);
 
-// Make a move
-router.post('/move', gameController.makeMove);
+router.post('/guess', gameController.guess);
 
 // Get the game result
 router.get('/result', gameController.getResult);
+
 
 module.exports = router;

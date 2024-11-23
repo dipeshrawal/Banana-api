@@ -1,3 +1,4 @@
+// routes/authRoutes.js
 const express = require("express");
 const { registerUser, loginUser } = require("../controllers/authController");
 const authenticateToken = require("../middleware/authMiddleware"); // Import the authentication middleware

@@ -3,6 +3,8 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/databaseConnection");
 
+
+
 // Load environment variables
 dotenv.config();
 
@@ -19,6 +21,8 @@ app.use(express.json());       // Parse JSON bodies
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/game", require("./routes/gameRoutes"));
+const leaderboardRoutes = require("./routes/leaderboardRoutes");
+app.use("/api/leaderboard", leaderboardRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

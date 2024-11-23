@@ -1,4 +1,5 @@
 const axios = require('axios');
+const User = require('../models/User'); // Import the User model
 
 // Helper function to fetch game data from the API
 const fetchGameData = async () => {
@@ -23,30 +24,29 @@ exports.startGame = async (req, res) => {
   }
 };
 
-// Make a move
-exports.makeMove = async (req, res) => {
-  const { number } = req.body;
+// Make a guess
+exports.guess = async (req, res) => {
+  const {username } = req.body;
+   // Ensure you're passing the userId and number
+   if (!username) {
+    return res.status(400).json({ error: 'Username is required.' });
+}
 
-  // Validate the input number
-  if (!number) {
-    return res.status(400).json({ error: 'A number is required to make a move' });
-  }
+try {
+    const user = await User.findOne({ username });
+    if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+    }
 
-  const selectedNumber = parseInt(number, 10);
-  if (isNaN(selectedNumber) || selectedNumber < 0 || selectedNumber > 9) {
-    return res.status(400).json({ error: 'Please enter a valid number between 0 and 9.' });
-  }
+    user.gamesWon = (user.gamesWon || 0) + 1; // Increment gamesWon
+    await user.save();
 
-  try {
-    console.log("Making move with number:", selectedNumber);
-    const response = await axios.get(`http://marcconrad.com/uob/banana/api.php?num=${selectedNumber}`);
-    console.log("Move made successfully:", response.data);
-    res.status(200).json({ message: 'Move made', data: response.data });
-  } catch (error) {
-    console.error('Error making move:', error);
-    res.status(500).json({ error: 'Error making move', details: error.message });
-  }
+    res.status(200).json({ message: 'Games won updated successfully.' });
+} catch (err) {
+    res.status(500).json({ error: 'Failed to update games won.' });
+}
 };
+
 
 // Get the game result
 exports.getResult = async (req, res) => {
