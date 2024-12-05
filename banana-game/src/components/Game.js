@@ -69,10 +69,6 @@ function Game() {
 
     // Check user's entered number
     const enter = async () => {
-        if (cooldown > 0) {
-            setError('You are in cooldown period. Wait for it to end.');
-            return;
-        }
         if (!number) return setError('Please enter a number.');
     
         const selectedNumber = parseInt(number, 10);
@@ -122,6 +118,10 @@ function Game() {
     };
 
     const handlePlayAgain = () => {
+        if (cooldown > 0) {
+            setError('You are in cooldown period. Wait for it to end.');
+            return;
+        }
         setNumber('');
         setGameData(null);
         setGameOver(false);

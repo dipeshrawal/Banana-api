@@ -39,7 +39,7 @@ try {
     }
 
     user.gamesWon = (user.gamesWon || 0) + 1; // Increment gamesWon
-    await user.save();
+    await user.save(); 
 
     res.status(200).json({ message: 'Games won updated successfully.' });
 } catch (err) {
